@@ -1,32 +1,33 @@
+;assembly part using x86-64
+
+section .data
+meters	dd 1000.0 ;1 km = 1000 meters
+secs	dd 3600.0 ;1 hr = 3600 seconds
+
 section .text
 bits 64
+default rel
 
 global accelerationcalculator
 
+; NOTE:
+; xmm0 = vi
+; xmm1 = vf
+; xmm2 = time
+
 accelerationcalculator:
+	
+	;--- (vf - vi) / time ---
+	subss xmm1, xmm0
+	divss xmm1, xmm2
+	
+	;--- convert to m/s ---
+	movss xmm3, dword [meters]
+	movss xmm4, dword [secs]
+	divss xmm3, xmm4 ; 1000 / 3600
+	mulss xmm1, xmm3 ; ((vi - vf) / time) * (1000/3600)
 
-                                ; xmmm0: vi
-                                ; xmm1 : vf
-                                ; xmm2 : time
-    push rbp
-    mov rbp, rsp
-    sub rsp, 32                 ; stack space
-    
-    mov dword [rsp], 0x3E8E38E4 ; .277778 in single-precision hex
+	;--- convert to int ---
+	cvtss2si eax, xmm1 
 
-    movss xmm3, [rsp]           ; xmm3 = .277778
-    movss xmm4, xmm0            ; xmm4 = vi
-    movss xmm5, xmm1            ; xmm5 = vf
-
-    mulss xmm4, xmm3            ; convert vi from km/h to m/s  
-    mulss xmm5, xmm3            ; convert vf from km/h to m/s
-
-    subss xmm5, xmm4            ; velocity difference // vf-vi
-
-    divss xmm5, xmm2            ; acceleration // (vf - vi)/time
-
-    cvttss2si eax, xmm5         ; convert to integer
-    
-    add rsp, 32                 ;cleaning stack space
-    pop rbp
-    ret
+	ret
