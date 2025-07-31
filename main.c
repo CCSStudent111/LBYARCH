@@ -9,7 +9,7 @@ int main() {
 	int i, accel, nums;
 	float vi, vf, time, cputime;
 	char line[100];
-	int accelerations[100];
+	int accelerations[10000];
 	LARGE_INTEGER frequency, start, end;
 	double ns;
 
