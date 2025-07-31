@@ -21,6 +21,7 @@ int main() {
 	scanf_s(" %d", &rows);
 	getchar(); // gets newline
 
+	avg_time = 0.0;
 	for (i = 0; i < rows; i++) {
 
 		nums = 0;
@@ -29,7 +30,6 @@ int main() {
 		nums = sscanf_s(line, "%f, %f, %f", &vi, &vf, &time);
 
 		if (nums == 3) {
-			avg_time = 0.0;
 			for (j = 0; j < 30; j++) { // 30 trials
 				QueryPerformanceCounter(&start);
 
